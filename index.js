@@ -4,10 +4,14 @@ const port = 3000
 const { User } = require("./models/User");
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser');
-const config = require('./config/key')
+const cookieParser = require('cookie-parser');
+const config = require('./config/key');
+const jwt = require('jsonwebtoken');
 
 //application/x-www-form-urlencoded 이런식으로 된 데이터를 가져와서 분석해주는 코드
 app.use(bodyParser.urlencoded({extended: true}));
+
+app.use(cookieParser());
 
 //application/json 으로된 데이터를 가져와서 분석할수있게 하는 코드
 app.use(bodyParser.json());
@@ -53,7 +57,14 @@ app.post('login', (req, res) => {
         
         // 비밀번호까지 맞다면 토큰을 생성하기
         user.generateToken((err, user) => {
-            
+            //jsonwebtoken을 이용해서 token을 생성하기
+            if(err) return res.status(400).send(err);
+
+            //토큰을 저장한다 -> 어디에? 오늘은 쿠키에 저장해보자
+            res.cookie('x_auth', user.token)
+            .status(200)
+            .json({loginSuccess: true, userId: user._id})
+
         })
     })
 

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const { JsonWebTokenError } = require('jsonwebtoken');
 const saltRounds = 10; 
 
 const userSchema = mongoose.Schema({
@@ -66,6 +67,20 @@ userSchema.methods.compaarePassword = function(plainPassword, cb){
         if(err) return CDATASection(err),
             cb(null, isMatch)
     })
+}
+
+userSchema.methods.generateToken = function(cb) {
+    var user = this;
+
+    //jsonwebtoken을 이용해서 token생성하기
+    var toekn = jwt.sign(user._id, 'secretToken') //user._id랑 secretToken 두개를 더해서 token을 만들고, 나중에 secretToken 를 가지고 user._id를 찾는것
+
+     user.token = token;
+     user.save(function(err, user){
+        if(err) return cb(err)
+        cb(null, user) //여기서 callback함수를 받은 user정보가 index의 user.generateToken의 user로 감
+     })
+
 }
 
 const User = mongoose.model('User', userSchema);
