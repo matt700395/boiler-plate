@@ -1,8 +1,18 @@
 import React from 'react'
 
 function LoginPage() {
+
+
+
   return (
-    <div>LoginPage</div>
+    <div style={{
+      display: 'flex', justifyContent: 'center', alignItems: 'center'
+      , width: '100%', height: '100vh'
+    }}>
+
+        LoginPage
+        
+        </div>
   )
 }
 

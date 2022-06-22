@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express();
-const port = 3000;
+const port = 5000;
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const config = require('./config/key');
@@ -15,6 +15,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //application/json 으로된 데이터를 가져와서 분석할수있게 하는 코드
 app.use(bodyParser.json());
 app.use(cookieParser());
+
+app.get('/api/hello', (req, res) =>{
+    res.send("안녕하세요");
+})
 
 mongoose.connect(config.mongoURI, {
     useNewUrlParser: true, useUnifiedTopology: true
