@@ -1,10 +1,8 @@
 const {  User  } = require('../models/User');
 
-
-console.log("ping a");
 let auth = (req, res, next) => {
     //여기서 인증처리를 할 예정
-    console.log("ping c");
+
     //클라이언트 쿠키에서 토큰을 가져옴
     let token = req.cookies.x_auth;
 
@@ -23,12 +21,10 @@ let auth = (req, res, next) => {
 
     //유저가 없으면 인증 No!
 
-
 };
 
-console.log("ping b");
 
 
-module.expoorts = { auth };
+module.exports = { auth };
 
 

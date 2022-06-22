@@ -9,7 +9,6 @@ const mongoose = require('mongoose');
 const { auth } = require('./middleware/auth');
 
 
-
 //application/x-www-form-urlencoded 이런식으로 된 데이터를 가져와서 분석해주는 코드
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -40,7 +39,6 @@ app.post('/api/users/register', (req, res) =>{
 })
 
 app.post('/api/users/login', (req, res) => {
-    console.log('pinga');
 
     //요청된 이메일을 데이터베이스에서 있는지 찾는다.
     User.findOne({ email: req.body.email }, (err, user) => {
@@ -68,9 +66,9 @@ app.post('/api/users/login', (req, res) => {
     })
 
 })
-console.log("ping1");
+
 app.get('/api/users/auth', auth, (req, res) => {
-    console.log("ping3");
+
     
     //여기까지 미들웨어를 통과해 왔다는 이야기는 auth 인증이 ture라는 말
     res.status(200).json({
@@ -86,8 +84,8 @@ app.get('/api/users/auth', auth, (req, res) => {
     })
 
 })
-console.log("ping2");
-app.get('/api/users/logout', auth, (res, req) => {
+
+app.get('/api/users/logout', auth, (req, res) => {
     User.findOneAndUpdate({_id: req.user._id}, //user를 찾고
      { token: ""},// 토큰 삭제
      (err, user) =>{
