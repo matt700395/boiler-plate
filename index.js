@@ -8,6 +8,8 @@ const { User } = require("./models/User");
 const mongoose = require('mongoose');
 const { auth } = require('./middleware/auth');
 
+
+
 //application/x-www-form-urlencoded 이런식으로 된 데이터를 가져와서 분석해주는 코드
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -42,9 +44,7 @@ app.post('/api/users/login', (req, res) => {
 
     //요청된 이메일을 데이터베이스에서 있는지 찾는다.
     User.findOne({ email: req.body.email }, (err, user) => {
-        console.log('pingb');
         if(!user) {
-            console.log('pingc');
             return res.json({
                 loginSuccess: false,
                 message: "제공된 이메일에 해당하는 유저가 없습니다."
@@ -52,11 +52,8 @@ app.post('/api/users/login', (req, res) => {
         }
     // 요청된 이메일이 데이터 베이스에 있다면 비밀번호가 맞는 비밀번호 인지 확인.
     //User.js에서 comparePassword 메소드를 만들어서 사용하면됨
-    console.log('pingk');
     user.comparePassword(req.body.password , (err, isMatch) => {
-        console.log('ping0');
         if(!isMatch){
-            console.log('pingl');
             return res.json({ loginSuccess: false, message: "비밀번호가 틀렸습니다."})
         }
         // 비밀번호까지 맞다면 토큰을 생성하기
@@ -71,14 +68,15 @@ app.post('/api/users/login', (req, res) => {
     })
 
 })
-
-app.post('/api/users/auth', auth, (req, res) => {
-
+console.log("ping1");
+app.get('/api/users/auth', auth, (req, res) => {
+    console.log("ping3");
+    
     //여기까지 미들웨어를 통과해 왔다는 이야기는 auth 인증이 ture라는 말
     res.status(200).json({
         //Users.js에서 schema로 만들어둔것중 성공했을때 전달해주고 싶은것을 셋팅하면 됨
         _id : req.user._id,
-        isAdmin: req.user.role === 0 ? flase : true,
+        isAdmin: req.user.role === 0 ? false : true,
         isAuth: true,
         email: req.user.email,
         name: req.user.name,
@@ -88,6 +86,18 @@ app.post('/api/users/auth', auth, (req, res) => {
     })
 
 })
+console.log("ping2");
+app.get('/api/users/logout', auth, (res, req) => {
+    User.findOneAndUpdate({_id: req.user._id}, //user를 찾고
+     { token: ""},// 토큰 삭제
+     (err, user) =>{
+        if (err) return res.json({ success: false, err });
+        return res.status(200).send({
+            success: true
+        })
+     })
+})
+
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
