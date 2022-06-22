@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const config = require('./config/key');
 const { User } = require("./models/User");
 const mongoose = require('mongoose');
+const { auth } = require('./middleware/auth');
 
 //application/x-www-form-urlencoded 이런식으로 된 데이터를 가져와서 분석해주는 코드
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -22,7 +23,7 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-app.post('/register', (req, res) =>{
+app.post('/api/users/register', (req, res) =>{
     //회원가입 할때 필요한 정보들을 Clinent 에서 가져오면
     //그것들을 데이터베이스에 넣어준다 
 
@@ -67,6 +68,23 @@ app.post('/api/users/login', (req, res) => {
             res.cookie('x_auth', user.token).status(200).json({loginSuccess: true, userId: user._id})
         })
     })
+    })
+
+})
+
+app.post('/api/users/auth', auth, (req, res) => {
+
+    //여기까지 미들웨어를 통과해 왔다는 이야기는 auth 인증이 ture라는 말
+    res.status(200).json({
+        //Users.js에서 schema로 만들어둔것중 성공했을때 전달해주고 싶은것을 셋팅하면 됨
+        _id : req.user._id,
+        isAdmin: req.user.role === 0 ? flase : true,
+        isAuth: true,
+        email: req.user.email,
+        name: req.user.name,
+        lastname: req.user.lastname,
+        role: req.user.roel,
+        image: req.user.image
     })
 
 })
